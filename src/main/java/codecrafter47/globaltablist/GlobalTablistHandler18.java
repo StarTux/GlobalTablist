@@ -21,6 +21,7 @@ package codecrafter47.globaltablist;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.LoginResult;
+import net.md_5.bungee.protocol.Property;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 
 import java.util.ArrayList;
@@ -193,22 +194,19 @@ public class GlobalTablistHandler18 extends GlobalTablistHandlerBase {
         item.setUsername(player.getName());
         item.setGamemode(uuids.contains(player.getUniqueId()) || !plugin.getConfig().showPlayersOnOtherServersAsSpectators ? ((UserConnection) player).getGamemode() : 3);
         item.setUuid(player.getUniqueId());
-        item.setProperties(new String[0][0]);
+        item.setProperties(new Property[0]);
         LoginResult loginResult = ((UserConnection) player).
                 getPendingConnection().getLoginProfile();
         if (loginResult != null) {
-            String[][] props = new String[loginResult.getProperties().length][];
+            Property[] props = new Property[loginResult.getProperties().length];
             for (int i = 0; i < props.length; i++) {
-                props[i] = new String[]
-                        {
-                                loginResult.getProperties()[i].getName(),
-                                loginResult.getProperties()[i].getValue(),
-                                loginResult.getProperties()[i].getSignature()
-                        };
+                props[i] = new Property(loginResult.getProperties()[i].getName(),
+                                        loginResult.getProperties()[i].getValue(),
+                                        loginResult.getProperties()[i].getSignature());
             }
             item.setProperties(props);
         } else {
-            item.setProperties(new String[0][0]);
+            item.setProperties(new Property[0]);
         }
         pli.setItems(new PlayerListItem.Item[]{item});
         this.player.unsafe().sendPacket(pli);
